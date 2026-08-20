@@ -241,6 +241,11 @@ function getBuildConfig(env: Record<string, string>) {
 			host: '127.0.0.1', // see: https://github.com/vitejs/vite/pull/8543
 			port: parseInt(env.VIKUNJA_FRONTEND_PORT || '4173', 10),
 			strictPort: true,
+			// Vite 6+ blocks unknown Host headers (DNS rebinding). localhost/IPs stay allowed.
+			allowedHosts: (env.VIKUNJA_FRONTEND_ALLOWED_HOSTS || 'tasks')
+				.split(',')
+				.map((host: string) => host.trim())
+				.filter(Boolean),
 		},
 		output: {
 			manualChunks: {
