@@ -42,7 +42,10 @@
 			v-if="!showAll"
 			class="show-tasks-options"
 		>
-			<DatepickerWithRange @update:modelValue="setDate">
+			<DatepickerWithRange
+				:model-value="dateRange"
+				@update:modelValue="setDate"
+			>
 				<template #trigger="{toggle}">
 					<XButton
 						variant="primary"
@@ -202,12 +205,12 @@ const userAuthenticated = computed(() => authStore.authenticated)
 const loading = computed(() => taskStore.isLoading || taskCollectionService.value.loading)
 const filterIdUsedOnOverview = computed(() => authStore.settings?.frontendSettings?.filterIdUsedOnOverview)
 
-interface dateStrings {
-	dateFrom: string,
-	dateTo: string,
-}
+const dateRange = computed(() => ({
+	dateFrom: props.dateFrom ?? null,
+	dateTo: props.dateTo ?? null,
+}))
 
-function setDate(dates: dateStrings) {
+function setDate(dates: {dateFrom: Date | string | null, dateTo: Date | string | null}) {
 	router.push({
 		name: route.name as string,
 		query: {
