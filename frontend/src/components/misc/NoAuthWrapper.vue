@@ -1,10 +1,6 @@
 <template>
 	<div class="no-auth-wrapper">
-		<Logo
-			class="logo"
-			width="200"
-			height="58"
-		/>
+		<Logo class="logo" />
 		<div class="noauth-container">
 			<section
 				class="image"

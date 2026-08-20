@@ -1,27 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useNow } from '@vueuse/core'
-import { useAuthStore } from '@/stores/auth'
-import { useConfigStore } from '@/stores/config'
 import { useColorScheme } from '@/composables/useColorScheme'
 
-import LogoFull from '@/assets/logo-full.svg?component'
-import LogoFullPride from '@/assets/logo-full-pride.svg?component'
-import {MILLISECONDS_A_HOUR} from '@/constants/date'
+import LogoIcon from '@/assets/logo.svg?component'
 
-const now = useNow({
-	interval: MILLISECONDS_A_HOUR,
-})
+const APP_NAME = 'RMS Tasks'
 
-const authStore = useAuthStore()
-const configStore = useConfigStore()
 const { isDark } = useColorScheme()
-
-const Logo = computed(() => configStore.allowIconChanges
-	&& authStore.settings.frontendSettings.allowIconChanges
-	&& now.value.getMonth() === 5
-	? LogoFullPride
-	: LogoFull)
 
 const CustomLogo = computed(() => {
 	const lightLogo = window.CUSTOM_LOGO_URL
@@ -36,25 +21,48 @@ const CustomLogo = computed(() => {
 </script>
 
 <template>
-	<div>
-		<Logo
-			v-if="!CustomLogo"
-			alt="Vikunja"
-			class="logo"
-		/>
+	<div class="logo-mark">
 		<img
-			v-show="CustomLogo"
+			v-if="CustomLogo"
 			:src="CustomLogo"
-			alt="Vikunja"
-			class="logo"
+			:alt="APP_NAME"
+			class="logo-custom"
 		>
+		<template v-else>
+			<LogoIcon
+				class="logo-icon"
+				aria-hidden="true"
+			/>
+			<span class="logo-text">{{ APP_NAME }}</span>
+		</template>
 	</div>
 </template>
 
 <style lang="scss" scoped>
-.logo {
+.logo-mark {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
 	color: var(--logo-text-color);
+	max-inline-size: 100%;
+}
+
+.logo-icon {
+	flex-shrink: 0;
+	block-size: 2.5rem;
+	inline-size: 2.5rem;
+}
+
+.logo-custom {
 	max-inline-size: 168px;
 	max-block-size: 48px;
+}
+
+.logo-text {
+	font-family: $vikunja-font;
+	font-size: 1.375rem;
+	font-weight: 700;
+	line-height: 1;
+	white-space: nowrap;
 }
 </style>

@@ -13,10 +13,7 @@
 				class="logo"
 				:aria-label="$t('navigation.home')"
 			>
-				<Logo
-					width="164"
-					height="48"
-				/>
+				<Logo />
 			</RouterLink>
 			<menu class="menu-list other-menu-items">
 				<li>

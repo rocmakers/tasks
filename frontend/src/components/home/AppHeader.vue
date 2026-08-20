@@ -9,10 +9,7 @@
 			class="logo-link"
 			:aria-label="$t('navigation.home')"
 		>
-			<Logo
-				width="164"
-				height="48"
-			/>
+			<Logo />
 		</RouterLink>
 
 		<MenuButton class="menu-button" />
