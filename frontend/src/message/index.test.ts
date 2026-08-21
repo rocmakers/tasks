@@ -45,6 +45,10 @@ describe('getErrorText', () => {
 		expect(text).toBe('Something went wrong')
 	})
 
+	it('returns a plain string error as-is', () => {
+		expect(getErrorText('Missing required prop: "modelValue"')).toBe('Missing required prop: "modelValue"')
+	})
+
 	it('falls back to data.message for an unknown error code', () => {
 		const text = getErrorText({
 			response: {

@@ -66,36 +66,38 @@ function handleChange(event: Event) {
 </script>
 
 <template>
-	<div :class="wrapperClasses">
-		<select
-			:id="selectId"
-			v-bind="{ ...$attrs, ...selectBindings }"
-			:disabled="disabled || undefined"
-			:aria-invalid="error ? true : undefined"
-			:aria-describedby="errorId"
-			@change="handleChange"
+	<div>
+		<div :class="wrapperClasses">
+			<select
+				:id="selectId"
+				v-bind="{ ...$attrs, ...selectBindings }"
+				:disabled="disabled || undefined"
+				:aria-invalid="error ? true : undefined"
+				:aria-describedby="errorId"
+				@change="handleChange"
+			>
+				<template v-if="normalizedOptions">
+					<option
+						v-for="opt in normalizedOptions"
+						:key="opt.value"
+						:value="opt.value"
+						:disabled="opt.disabled || undefined"
+					>
+						{{ opt.label }}
+					</option>
+				</template>
+				<slot v-else />
+			</select>
+		</div>
+		<p
+			v-if="error"
+			:id="errorId"
+			class="help is-danger"
+			role="alert"
 		>
-			<template v-if="normalizedOptions">
-				<option
-					v-for="opt in normalizedOptions"
-					:key="opt.value"
-					:value="opt.value"
-					:disabled="opt.disabled || undefined"
-				>
-					{{ opt.label }}
-				</option>
-			</template>
-			<slot v-else />
-		</select>
+			{{ error }}
+		</p>
 	</div>
-	<p
-		v-if="error"
-		:id="errorId"
-		class="help is-danger"
-		role="alert"
-	>
-		{{ error }}
-	</p>
 </template>
 
 <style lang="scss" scoped>

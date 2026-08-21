@@ -1,39 +1,42 @@
 <template>
-	<BaseButton
-		class="button"
-		:class="[
-			variantClass,
-			{
-				'is-loading': loading,
-				'has-no-shadow': !shadow || variant === 'tertiary',
-				'is-danger': danger,
-			}
-		]"
-		:disabled="disabled || loading"
-		:style="{
-			'--button-white-space': wrap ? 'break-spaces' : 'nowrap',
-		}"
-	>
-		<template v-if="icon">
-			<Icon
-				v-if="!$slots.default"
-				:icon="icon"
-				:style="{color: iconColor}"
-			/>
-			<span
-				v-else
-				class="icon is-small"
-			>
+	<span class="x-button">
+		<BaseButton
+			v-bind="$attrs"
+			class="button"
+			:class="[
+				variantClass,
+				{
+					'is-loading': loading,
+					'has-no-shadow': !shadow || variant === 'tertiary',
+					'is-danger': danger,
+				}
+			]"
+			:disabled="disabled || loading"
+			:style="{
+				'--button-white-space': wrap ? 'break-spaces' : 'nowrap',
+			}"
+		>
+			<template v-if="icon">
 				<Icon
+					v-if="!$slots.default"
 					:icon="icon"
 					:style="{color: iconColor}"
 				/>
+				<span
+					v-else
+					class="icon is-small"
+				>
+					<Icon
+						:icon="icon"
+						:style="{color: iconColor}"
+					/>
+				</span>
+			</template>
+			<span>
+				<slot />
 			</span>
-		</template>
-		<span>
-			<slot />
-		</span>
-	</BaseButton>
+		</BaseButton>
+	</span>
 </template>
 
 <script setup lang="ts">
@@ -62,7 +65,10 @@ export interface ButtonProps {
 	danger?: boolean
 }
 
-defineOptions({name: 'XButton'})
+defineOptions({
+	name: 'XButton',
+	inheritAttrs: false,
+})
 
 // @ts-expect-error - Complex union type from IconProp causes TS2590, but the code is correct
 const variant = computed(() => (props.variant ?? 'primary') as ButtonTypes)
@@ -72,6 +78,16 @@ const variantClass = computed<string>(() => VARIANT_CLASS_MAP[variant.value])
 </script>
 
 <style lang="scss" scoped>
+.x-button {
+	display: inline-flex;
+	vertical-align: top;
+	max-inline-size: 100%;
+
+	&:has(.is-fullwidth) {
+		inline-size: 100%;
+	}
+}
+
 .button {
 	// Button text must stay white regardless of theme, so we use a fixed value
 	// instead of var(--white) which changes in dark mode.

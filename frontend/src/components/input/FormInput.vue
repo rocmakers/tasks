@@ -62,22 +62,24 @@ defineExpose({
 </script>
 
 <template>
-	<input
-		:id="inputId"
-		ref="inputRef"
-		v-bind="{ ...$attrs, ...inputBindings }"
-		:class="inputClasses"
-		:disabled="disabled || undefined"
-		:aria-invalid="error ? true : undefined"
-		:aria-describedby="errorId"
-		@input="handleInput"
-	>
-	<p
-		v-if="error"
-		:id="errorId"
-		class="help is-danger"
-		role="alert"
-	>
-		{{ error }}
-	</p>
+	<div>
+		<input
+			:id="inputId"
+			ref="inputRef"
+			v-bind="{ ...$attrs, ...inputBindings }"
+			:class="inputClasses"
+			:disabled="disabled || undefined"
+			:aria-invalid="error ? true : undefined"
+			:aria-describedby="errorId"
+			@input="handleInput"
+		>
+		<p
+			v-if="error"
+			:id="errorId"
+			class="help is-danger"
+			role="alert"
+		>
+			{{ error }}
+		</p>
+	</div>
 </template>

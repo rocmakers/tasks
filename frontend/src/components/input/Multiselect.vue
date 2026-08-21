@@ -106,10 +106,10 @@
 						</slot>
 					</span>
 					<span
-						v-if="selectPlaceholder.trim()"
+						v-if="selectPlaceholderText.trim()"
 						class="hint-text"
 					>
-						{{ selectPlaceholder }}
+						{{ selectPlaceholderText }}
 					</span>
 				</BaseButton>
 
@@ -139,7 +139,7 @@
 						</slot>
 					</span>
 					<span class="hint-text is-always-visible">
-						{{ createPlaceholder }}
+						{{ createPlaceholderText }}
 					</span>
 				</BaseButton>
 
@@ -158,7 +158,7 @@
 
 <script setup lang="ts" generic="T extends Record<string, unknown>">
 import {computed, onBeforeUnmount, onMounted, ref, toRefs, useId, watch, type ComponentPublicInstance} from 'vue'
-import {useI18n} from 'vue-i18n'
+import {i18n} from '@/i18n'
 
 import {closeWhenClickedOutside} from '@/helpers/closeWhenClickedOutside'
 
@@ -212,8 +212,6 @@ const props = withDefaults(defineProps<{
 	label: '',
 	creatable: false,
 	creationDisabledMessage: '',
-	createPlaceholder: () => useI18n().t('input.multiselect.createPlaceholder'),
-	selectPlaceholder: () => useI18n().t('input.multiselect.selectPlaceholder'),
 	multiple: false,
 	inline: false,
 	showEmpty: false,
@@ -224,7 +222,12 @@ const props = withDefaults(defineProps<{
 	id: undefined,
 	name: undefined,
 	ariaLabel: undefined,
+	createPlaceholder: undefined,
+	selectPlaceholder: undefined,
 })
+
+const createPlaceholderText = computed(() => props.createPlaceholder ?? i18n.global.t('input.multiselect.createPlaceholder'))
+const selectPlaceholderText = computed(() => props.selectPlaceholder ?? i18n.global.t('input.multiselect.selectPlaceholder'))
 
 const emit = defineEmits<{
 	'update:modelValue': [value: T | T[] | null],

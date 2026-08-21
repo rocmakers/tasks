@@ -21,7 +21,7 @@
 				v-if="isExternalUser"
 				class="help"
 			>
-				{{ $t('user.settings.general.externalUserNameChange', {provider: authStore.info.authProvider}) }}
+				{{ $t('user.settings.general.externalUserNameChange', {provider: authStore.info?.authProvider}) }}
 			</p>
 			<FormField
 				:label="$t('user.settings.general.defaultProject')"
@@ -503,6 +503,9 @@ function useAvailableTimezones(settingsRef: Ref<IUserSettings>) {
 			
 			availableTimezones.value = []
 		})
+		.catch(() => {
+			availableTimezones.value = []
+		})
 	
 	// Search function that filters available timezones
 	function search(query: string) {
@@ -546,7 +549,7 @@ const {
 	timezoneObject,
 } = useAvailableTimezones(settings)
 
-const isExternalUser = computed(() => !authStore.info.isLocalUser)
+const isExternalUser = computed(() => !authStore.info?.isLocalUser)
 
 watch(
 	() => authStore.settings,

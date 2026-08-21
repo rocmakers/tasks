@@ -2,6 +2,10 @@ import {i18n} from '@/i18n'
 import {notify} from '@kyvg/vue3-notification'
 
 export function getErrorText(r): string {
+	if (typeof r === 'string') {
+		return r
+	}
+
 	const data = r?.reason?.response?.data || r?.response?.data
 
 	if (data?.code) {
@@ -19,7 +23,8 @@ export function getErrorText(r): string {
 	}
 	
 	// v2 errors are RFC 9457 problem+json, which carries `detail` instead of `message`.
-	let message = data?.message || data?.detail || r.message
+	// PromiseRejectionEvent carries the real error on `reason`; Vue warnings are plain strings.
+	let message = data?.message || data?.detail || r?.reason?.message || r?.message
 	
 	if (typeof r.cause?.message !== 'undefined') {
 		message += ' ' + r.cause.message
