@@ -1,66 +1,45 @@
-<img src="https://vikunja.io/images/vikunja-logo.svg" alt="" style="display: block;width: 50%;margin: 0 auto;" width="50%"/>
+# RMS Tasks
 
-[![Build Status](https://github.com/go-vikunja/vikunja/actions/workflows/ci.yml/badge.svg)](https://github.com/go-vikunja/vikunja/actions/workflows/ci.yml)
-[![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](LICENSE)
-[![Install](https://img.shields.io/badge/download-v2.5.0-brightgreen.svg)](https://vikunja.io/docs/installing)
-[![Docker Pulls](https://img.shields.io/docker/pulls/vikunja/vikunja.svg)](https://hub.docker.com/r/vikunja/vikunja/)
-[![OpenAPI Docs](https://img.shields.io/badge/swagger-docs-brightgreen.svg)](https://try.vikunja.io/api/v2/docs)
+Task management for [Rochester Makerspace](https://rocmakers.org/).
 
-# Vikunja
+This repository is a fork of [Vikunja](https://vikunja.io/), the open-source, self-hostable task manager. We run it for the makerspace and keep a small set of local changes (branding and deploy tweaks) on top of upstream.
 
-> The task manager you actually own. 
+Upstream: [go-vikunja/vikunja](https://github.com/go-vikunja/vikunja). Install docs, API reference, and project background live on [vikunja.io](https://vikunja.io/).
 
-If Vikunja is useful to you, please consider [supporting the project](https://vikunja.io/support/). You can [buy a coffee](https://www.buymeacoffee.com/kolaente), [sponsor on GitHub](https://github.com/sponsors/kolaente) or buy [a sticker pack](https://vikunja.io/stickers).
-We're also offering [a hosted version of Vikunja](https://vikunja.cloud/) if you want a hassle-free solution for yourself or your team.
-If you or your company needs admin panel, audit logs or time tracking, check out [Vikunja Pro](https://vikunja.io/pro/).
+## Local development
 
-> [!NOTE]
-> For the development of Vikunja, we're using LLM-Assisted coding tools in various parts of the codebase.
-> Most contributions made @tink-bot are built that way.
+You need Go 1.27, Node.js 24+, [pnpm](https://pnpm.io/), and [Mage](https://magefile.org/) (`go install github.com/magefile/mage@latest`; put `$(go env GOPATH)/bin` on your `PATH`). From the repo root, `devenv shell` installs those tools if you use Nix.
 
-## Table of contents
+SQLite is the default database. Run the API and the Vue frontend as two processes.
 
-- [Security Reports](#security-reports)
-- [Features](#features)
-- [Docs](#docs)
-	- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-	- [Unsplash Images](#unsplash-images)
+### API
 
-## Security Reports
+```bash
+mage build
+VIKUNJA_SERVICE_PUBLICURL=http://localhost:3456 ./vikunja
+```
 
-If you find any security-related issues you don't want to disclose publicly, please use [the contact information on our website](https://vikunja.io/contact/#security).
+The API listens on `:3456`. `publicurl` is required because CORS is on by default. Registration is enabled, so you can create an account from the UI.
 
-## Features
+### Frontend
 
-See [the features page](https://vikunja.io/features/) on our website for a more exhaustive list or 
-try it on [try.vikunja.io](https://try.vikunja.io)!
+```bash
+cd frontend
+pnpm install
+cp .env.local.example .env.local
+```
 
-## Docs
+In `.env.local`, set `DEV_PROXY=http://localhost:3456`, then:
 
-* [Installing](https://vikunja.io/docs/installing/)
-* [Build from source](https://vikunja.io/docs/build-from-sources/)
-* [Development setup](https://vikunja.io/docs/development/)
-* [Magefile](https://vikunja.io/docs/magefile/)
-* [Testing](https://vikunja.io/docs/testing/)
+```bash
+pnpm dev
+```
 
-All docs can be found on [the Vikunja home page](https://vikunja.io/docs/).
-
-### Roadmap
-
-See [the roadmap](https://my.vikunja.cloud/share/QFyzYEmEYfSyQfTOmIRSwLUpkFjboaBqQCnaPmWd/auth) (hosted on Vikunja!) for more!
-
-## Contributing
-
-Please check out the contribution guidelines on [the website](https://vikunja.io/docs/development/).
+Open [http://127.0.0.1:4173](http://127.0.0.1:4173). Vite proxies `/api` to the local backend. The `tasks` hostname is already allowed on the Vite dev server if you use that locally.
 
 ## License
 
-Most of this repository is licensed under [AGPL‑3.0‑or‑later](LICENSE).
-The contents of [`desktop/`](desktop/) are licensed under
-[GPL‑3.0‑or‑later](desktop/LICENSE).
+Most of this repository is licensed under [AGPL‑3.0‑or‑later](LICENSE), same as Vikunja.
+The contents of [`desktop/`](desktop/) are licensed under [GPL‑3.0‑or‑later](desktop/LICENSE).
 
-### Unsplash Images
-
-Background images from Unsplash are distributed under the [Unsplash License](https://unsplash.com/license). The license requires giving credit to the photographer and Unsplash. See [Unsplash’s terms](https://unsplash.com/terms) for more information.
+Background images from Unsplash are distributed under the [Unsplash License](https://unsplash.com/license).
