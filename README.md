@@ -39,64 +39,91 @@ Open [http://127.0.0.1:4173](http://127.0.0.1:4173). Vite proxies `/api` to the 
 
 ## Dump and restore
 
-Use `vikunja dump` / `vikunja restore` to copy a **whole instance**: users, teams, project shares, task assignments, files, and the database.
+`vikunja dump` / `vikunja restore` copy a whole instance (users, teams, files, DB). That is not the UI export under **Settings**, which is one user’s projects only. Restore wipes the target — stop the API first.
 
-That is not the same as **Settings → Export your Vikunja data**. The UI export is a personal zip of one user’s projects and tasks. Importing it does not create other accounts, shares, or assignments (except the importer, if their email or username matches).
-
-Restore **wipes the target instance**. Stop the API first so it is not using `vikunja.db`.
-
-### Dump from Docker (production)
-
-`dump` is a subcommand of the Vikunja binary. `docker compose exec` skips the image entrypoint, so `docker compose exec vikunja dump` fails with “executable file not found”.
-
-On the production host, from the compose directory:
+Dump on the production host (full binary path required; `-p /tmp` because `/app/vikunja` is not writable):
 
 ```bash
 docker compose exec vikunja /app/vikunja/vikunja dump -p /tmp -f vikunja-dump.zip
 docker compose cp vikunja:/tmp/vikunja-dump.zip .
 ```
 
-`-p /tmp` is required on the official image: `/app/vikunja` is not writable. If the service is not named `vikunja`, use the name from `docker compose ps`.
-
-Copy the zip onto the machine where you will restore (for example `scp` into this repo).
-
-On a non-Docker install, from the directory with `config.yml`:
+Restore locally. Dump `VERSION` and `./vikunja version` must match exactly, so stamp the build. `--preserve-config` keeps this repo’s `config.yml`. Confirm with `Yes, I understand`.
 
 ```bash
-VIKUNJA_SERVICE_PUBLICURL=http://localhost:3456 ./vikunja dump -p . -f vikunja-dump.zip
-```
-
-`publicurl` is required because CORS is on by default. The zip lands next to the binary unless you pass `-p`.
-
-### Restore locally
-
-The dump’s `VERSION` and this binary must match **exactly**, including `dev`. Check both:
-
-```bash
-unzip -p vikunja-dump.zip VERSION
-./vikunja version
-```
-
-A `mage build` binary is stamped from git (`git describe`), so it usually will not match a production release. Stamp the local build with the dump’s version, then restore:
-
-```bash
-mage build
-# if versions differ:
 RELEASE_VERSION="$(unzip -p vikunja-dump.zip VERSION)" mage build
-
-# stop any running ./vikunja process first
 VIKUNJA_SERVICE_PUBLICURL=http://localhost:3456 ./vikunja restore --preserve-config vikunja-dump.zip
 ```
 
-`--preserve-config` keeps this repo’s `config.yml` instead of overwriting it with the production Docker config. When prompted, type exactly:
+## Repository layout
 
-```text
-Yes, I understand
-```
+### Dotfiles / tooling
 
-Then start the API again as in [Local development](#local-development). Log in with the production users; they came over with the dump.
+- `.claude` — Claude Code skills and settings
+- `.cursor` — Cursor IDE project config
+- `.devcontainer` — VS Code/GitHub Codespaces container setup
+- `.dockerignore` — files excluded from Docker image builds
+- `.editorconfig` — shared editor indentation/formatting rules
+- `.github` — GitHub Actions, issue templates, funding
+- `.gitignore` — files git should ignore
+- `.golangci.yml` — Go linter configuration
+- `.opensourcefinder-verify` — Open Source Finder listing verification token
+- `.vscode` — VS Code launch/settings/extensions
+- `.zed` — Zed editor tasks
 
-If restore fails with `service.publicurl is required when cors.enable is true`, you omitted `VIKUNJA_SERVICE_PUBLICURL`. If it fails with a version mismatch, the two version strings above are not identical.
+### Docs / license
+
+- `AGENTS.md` — AI/contributor instructions for this repo
+- `CHANGELOG.md` — version history
+- `CLAUDE.md` — symlink to `AGENTS.md`
+- `CONTRIBUTING.md` — how to contribute
+- `LICENSE` — AGPLv3 license text
+
+### App source
+
+- `pkg/` — Go API backend (models, routes, services)
+- `frontend/` — Vue.js web client
+- `desktop/` — Electron desktop wrapper
+- `veans` — related Go CLI/tooling project
+- `main.go` — Go entrypoint; runs `pkg/cmd`
+- `magefile.go` — Mage build/dev/test/release tasks
+- `go.mod` / `go.sum` — Go module dependencies
+
+### Config
+
+- `config.yml` — local runtime config
+- `config.yml.sample` — sample config for installs
+- `config-raw.json` — source used to generate the sample config
+
+### Packaging / deploy
+
+- `Dockerfile` — container image for Vikunja
+- `nfpm.yaml` — Linux package (deb/rpm/apk) spec
+- `vikunja.service` — systemd unit
+- `vikunja.initd` — OpenRC init script
+- `build/` — packaging scripts (post-install, reprepro)
+- `publiccode.yml` — public-sector software catalog metadata
+
+### Dev environment
+
+- `devenv.nix` / `devenv.yaml` / `devenv.lock` — Nix devenv environment
+- `mise.toml` — pinned Node, pnpm, and Go versions
+- `conductor.json` — Conductor worktree setup (direnv)
+- `paseo.json` — Paseo worktree setup (config + frontend install)
+- `tsconfig.json` — root TS parser pointing at `frontend/`
+
+### i18n / deps / changelog tooling
+
+- `crowdin.yml` — Crowdin translation sync
+- `renovate.json` — Renovate dependency-update bot
+- `cliff.toml` — git-cliff changelog generation
+- `code-header-template.txt` — AGPL header stamped onto source files
+
+### Examples / extras
+
+- `contrib/` — extra scripts (e.g. translation cleanup)
+- `examples/` — example plugins
+- `rest/` — Bruno HTTP API request collection
 
 ## License
 
