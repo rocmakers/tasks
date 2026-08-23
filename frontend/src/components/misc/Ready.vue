@@ -95,6 +95,10 @@ const baseStore = useBaseStore()
 	margin-block-end: 1rem;
 	inline-size: 100px;
 	block-size: 100px;
+
+	:global(:root.dark) & {
+		filter: brightness(1.55);
+	}
 }
 
 .loader-container {

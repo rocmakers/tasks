@@ -158,7 +158,7 @@ function getBuildConfig(env: Record<string, string>) {
 			// https://github.com/Applelo/unplugin-inject-preload
 			UnpluginInjectPreload({
 				files: [{
-					outputMatch: createFontMatcher(['Quicksand', 'OpenSans', 'OpenSans-Italic']),
+					outputMatch: createFontMatcher(['Roboto', 'OpenSans', 'OpenSans-Italic']),
 					attributes: {crossorigin: 'anonymous'},
 				}],
 				injectTo: 'custom',

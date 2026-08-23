@@ -294,6 +294,10 @@ function confirmMigrateAgain() {
 	display: block;
 	max-block-size: 100px;
 	max-inline-size: 100px;
+
+	:global(:root.dark) & {
+		filter: brightness(1.55);
+	}
 }
 
 .progress-dots {
