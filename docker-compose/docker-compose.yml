@@ -1,0 +1,79 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      TZ: ${TZ}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  vikunja:
+    image: rocmakers/rms-tasks:latest
+    environment:
+      TZ: ${TZ}
+      VIKUNJA_SERVICE_PUBLICURL: ${VIKUNJA_SERVICE_PUBLICURL}
+      VIKUNJA_SERVICE_SECRET: ${VIKUNJA_SERVICE_SECRET}
+      VIKUNJA_SERVICE_ENABLESHARING: "true"
+      VIKUNJA_SERVICE_ENABLEREGISTRATION: "false"
+      VIKUNJA_DATABASE_TYPE: postgres
+      VIKUNJA_DATABASE_HOST: db
+      VIKUNJA_DATABASE_USER: ${POSTGRES_USER}
+      VIKUNJA_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      VIKUNJA_DATABASE_DATABASE: ${POSTGRES_DB}
+      VIKUNJA_MAILER_ENABLED: "true"
+      VIKUNJA_MAILER_HOST: ${VIKUNJA_MAILER_HOST}
+      VIKUNJA_MAILER_PORT: ${VIKUNJA_MAILER_PORT}
+      VIKUNJA_MAILER_USERNAME: ${VIKUNJA_MAILER_USERNAME}
+      VIKUNJA_MAILER_PASSWORD: ${VIKUNJA_MAILER_PASSWORD}
+      VIKUNJA_MAILER_FROMEMAIL: ${VIKUNJA_MAILER_FROMEMAIL}
+    expose:
+      - "3456"
+    volumes:
+      - ./files:/app/vikunja/files
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./caddy_logs:/var/log/caddy
+    depends_on:
+      - vikunja
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:9.17
+    environment:
+      TZ: ${TZ}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "127.0.0.1:8081:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  caddy_data:
+  caddy_config:
+  pgadmin_data:
