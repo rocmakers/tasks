@@ -36,6 +36,9 @@ mage-static
 /plugins/*
 /plugins-dev/*
 
+# Compose secrets (keep docker-compose/.env.example tracked)
+docker-compose/.env
+
 # pnpm
 .pnpm-store/
 
