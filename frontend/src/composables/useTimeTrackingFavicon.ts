@@ -17,7 +17,7 @@ function getFaviconLink(): HTMLLinkElement | null {
 export const useTimeTrackingFavicon = createSharedComposable(() => {
 	const {hasActiveTimer} = storeToRefs(useTimeTrackingStore())
 
-	const originalHref = getFaviconLink()?.getAttribute('href') ?? '/favicon.ico'
+	const originalHref = getFaviconLink()?.getAttribute('href') ?? '/images/icons/favicon-32x32.png'
 
 	function update(active: boolean) {
 		const link = getFaviconLink()

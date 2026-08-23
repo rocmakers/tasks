@@ -51,6 +51,10 @@ const CustomLogo = computed(() => {
 	flex-shrink: 0;
 	block-size: 2.5rem;
 	inline-size: 2.5rem;
+
+	:global(:root.dark) & {
+		filter: brightness(1.55);
+	}
 }
 
 .logo-custom {

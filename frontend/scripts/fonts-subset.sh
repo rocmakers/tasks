@@ -180,10 +180,10 @@ echo "\nOpen Sans Italic"
 
 instance_and_subset "${ORIGINAL_FONTS}/OpenSans-Italic[wdth,wght].ttf" "wdth=drop wght=400:700" "OpenSans-Italic[wght]"
 
-echo "\nQuicksand"
-# keep only variable weight range
+echo "\nRoboto"
+# we drop the wdth axis and keep only variable weight range
 
-instance_and_subset "${ORIGINAL_FONTS}/Quicksand[wght].ttf" "wght=400:700"
+instance_and_subset "${ORIGINAL_FONTS}/Roboto[wdth,wght].ttf" "wdth=drop wght=400:700" "Roboto[wght]"
 
 echo "\nSubsetting files complete"
 
@@ -237,8 +237,8 @@ for file in $FONT_FOLDER/*.woff2; do
             OpenSans-Italic\[wght\]_*.woff2)
                 update_font_reference "OpenSans-Italic\[wght\]" "$basename"
                 ;;
-            Quicksand\[wght\]_*.woff2)
-                update_font_reference "Quicksand\[wght\]" "$basename"
+            Roboto\[wght\]_*.woff2)
+                update_font_reference "Roboto\[wght\]" "$basename"
                 ;;
         esac
     fi
