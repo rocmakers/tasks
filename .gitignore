@@ -38,6 +38,9 @@ mage-static
 
 # Compose secrets (keep docker-compose/.env.example tracked)
 docker-compose/.env
+docker-compose/db/
+docker-compose/files/
+docker-compose/caddy_logs/
 
 # pnpm
 .pnpm-store/

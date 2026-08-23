@@ -18,6 +18,7 @@ services:
 
   vikunja:
     image: rocmakers/rms-tasks:latest
+    platform: linux/amd64
     environment:
       TZ: ${TZ}
       VIKUNJA_SERVICE_PUBLICURL: ${VIKUNJA_SERVICE_PUBLICURL}
@@ -46,11 +47,13 @@ services:
 
   caddy:
     image: caddy:2
+    environment:
+      CADDY_SITE: ${CADDY_SITE:-localhost}
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
       - ./caddy_logs:/var/log/caddy
