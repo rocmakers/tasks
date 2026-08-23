@@ -80,16 +80,11 @@ useTitle(() => title.value)
 
 <style lang="scss" scoped>
 .no-auth-wrapper {
-	background: var(--site-background) url("@/assets/llama.svg?url") no-repeat
-		fixed bottom left;
+	background: var(--site-background);
 	min-block-size: 100vh;
 	display: flex;
 	flex-direction: column;
 	place-items: center;
-
-	@media screen and (max-width: $fullhd) {
-		padding-block-end: 15rem;
-	}
 }
 
 .noauth-container {
