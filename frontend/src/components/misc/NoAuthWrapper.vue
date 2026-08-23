@@ -2,10 +2,7 @@
 	<div class="no-auth-wrapper">
 		<Logo class="logo" />
 		<div class="noauth-container">
-			<section
-				class="image"
-				:class="{ 'has-message': motd !== '' }"
-			>
+			<section class="image" :class="{ 'has-message': motd !== '' }">
 				<Message v-if="motd !== ''">
 					{{ motd }}
 				</Message>
@@ -13,22 +10,13 @@
 					{{ $t("misc.welcomeBack") }}
 				</h2>
 			</section>
-			<main
-				id="main-content"
-				tabindex="-1"
-				class="content"
-			>
+			<main id="main-content" tabindex="-1" class="content">
 				<div>
-					<h2
-						v-if="title"
-						class="title"
-					>
+					<h2 v-if="title" class="title">
 						{{ title }}
 					</h2>
-					<Message
-						v-if="motd !== ''"
-						class="is-hidden-tablet mbe-4"
-					>
+					<ApiConfig v-if="shouldShowApiConfig" />
+					<Message v-if="motd !== ''" class="is-hidden-tablet mbe-4">
 						{{ motd }}
 					</Message>
 					<slot />
@@ -40,26 +28,43 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 
-import Logo from '@/components/home/Logo.vue'
-import Message from '@/components/misc/Message.vue'
-import Legal from '@/components/misc/Legal.vue'
+import Logo from "@/components/home/Logo.vue";
+import Message from "@/components/misc/Message.vue";
+import Legal from "@/components/misc/Legal.vue";
+import ApiConfig from "@/components/misc/ApiConfig.vue";
 
-import { useTitle } from '@/composables/useTitle'
-import { useConfigStore } from '@/stores/config'
+import { useTitle } from "@/composables/useTitle";
+import { useConfigStore } from "@/stores/config";
+import { isDesktopApp } from "@/helpers/desktopAuth";
 
-const configStore = useConfigStore()
-const motd = computed(() => configStore.motd)
+const props = withDefaults(
+	defineProps<{
+		showApiConfig?: boolean;
+	}>(),
+	{
+		showApiConfig: false,
+	},
+);
 
-const route = useRoute()
-const { t } = useI18n({ useScope: 'global' })
+const isDesktop = isDesktopApp();
+const hasStoredApiUrl = isDesktop && localStorage.getItem("API_URL") !== null;
+const shouldShowApiConfig = computed(
+	() => props.showApiConfig && (!isDesktop || hasStoredApiUrl),
+);
+
+const configStore = useConfigStore();
+const motd = computed(() => configStore.motd);
+
+const route = useRoute();
+const { t } = useI18n({ useScope: "global" });
 const title = computed(() =>
-	route.meta?.title ? t(route.meta.title as string) : '',
-)
-useTitle(() => title.value)
+	route.meta?.title ? t(route.meta.title as string) : "",
+);
+useTitle(() => title.value);
 </script>
 
 <style lang="scss" scoped>
@@ -97,7 +102,7 @@ useTitle(() => title.value)
 	}
 
 	@media screen and (min-width: $tablet) {
-		background: url("@/assets/no-auth-image.jpg") no-repeat bottom/cover;
+		background: url("@/assets/hero-shop.jpg") no-repeat bottom/cover;
 		position: relative;
 
 		&.has-message {
